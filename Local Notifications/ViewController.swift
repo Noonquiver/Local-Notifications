@@ -70,8 +70,14 @@ class ViewController: UIViewController, UNUserNotificationCenterDelegate {
             print("Custom data received: \(customData)")
             
             switch response.actionIdentifier {
-            case UNNotificationDefaultActionIdentifier: print("Default identifier")
-            case "show": print("Show more information...")
+            case UNNotificationDefaultActionIdentifier:
+                let alertController = UIAlertController(title: "Default identifier", message: UNNotificationDefaultActionIdentifier, preferredStyle: .alert)
+                alertController.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
+                present(alertController, animated: true)
+            case "show":
+                let alertController = UIAlertController(title: "Custom identifier", message: "Show more information...", preferredStyle: .alert)
+                alertController.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
+                present(alertController, animated: true)
             default: break
             }
         }
