@@ -30,7 +30,7 @@ class ViewController: UIViewController, UNUserNotificationCenterDelegate {
         }
     }
     
-    @objc func scheduleLocal() {
+    @objc func scheduleLocal(reminder: Bool = false) {
         registerCategories()
         
         let notificationCenter = UNUserNotificationCenter.current()
@@ -48,7 +48,14 @@ class ViewController: UIViewController, UNUserNotificationCenterDelegate {
         dateComponents.minute = 30
         
         //let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+        var trigger: UNTimeIntervalNotificationTrigger
+        
+        if reminder {
+            trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+        } else {
+            trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+        }
+
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
         notificationCenter.add(request)
     }
@@ -58,7 +65,8 @@ class ViewController: UIViewController, UNUserNotificationCenterDelegate {
         notificationCenter.delegate = self
         
         let show = UNNotificationAction(identifier: "show", title: "Tell me more...", options: .foreground)
-        let category = UNNotificationCategory(identifier: "alarm", actions: [show], intentIdentifiers: [])
+        let reminder = UNNotificationAction(identifier: "reminder", title: "Remind me later", options: .foreground)
+        let category = UNNotificationCategory(identifier: "alarm", actions: [show, reminder], intentIdentifiers: [])
         
         notificationCenter.setNotificationCategories([category])
     }
@@ -78,7 +86,10 @@ class ViewController: UIViewController, UNUserNotificationCenterDelegate {
                 let alertController = UIAlertController(title: "Custom identifier", message: "Show more information...", preferredStyle: .alert)
                 alertController.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
                 present(alertController, animated: true)
-            default: break
+            case "reminder":
+                scheduleLocal(reminder: true)
+            default:
+                break
             }
         }
         
